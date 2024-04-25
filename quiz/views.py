@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .models import Quiz, QuizCategory, Question, Choice, QuizResponse, QuizAttempt, Rating, UserProgress
-from .serializers import QuizSerializer, QuizCategorySerializer, QuestionSerializer, ChoiceSerializer, QuizResponseSerializer, QuizAttemptSerializer, RatingSerializer, UserProgressSerializer
+from .models import Quiz, QuizCategory, Question, QuizAttempt, Rating, UserProgress
+from .serializers import QuizSerializer, QuizCategorySerializer, QuestionSerializer, QuizAttemptSerializer, RatingSerializer, UserProgressSerializer
 from rest_framework.pagination import PageNumberPagination
 from django.core.mail import send_mail
 
@@ -23,17 +23,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     pagination_class = QuestionPagination
     
-class ChoiceViewSet(viewsets.ModelViewSet):
-    queryset = Choice.objects.all()
-    serializer_class = ChoiceSerializer
     
 class QuizAttemptViewSet(viewsets.ModelViewSet):
     queryset = QuizAttempt.objects.all()
     serializer_class = QuizAttemptSerializer
-
-class QuizResponseViewSet(viewsets.ModelViewSet):
-    queryset = QuizResponse.objects.all()
-    serializer_class = QuizResponseSerializer
 
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
@@ -64,17 +57,10 @@ class QuizTakingView(generics.RetrieveAPIView):
         total_score = 0
         total_questions = quiz.question_set.count()
         for question in quiz.question_set.all():
-            correct_choice = question.choice_set.filter(is_correct=True).first()
-            user_choices = selected_choices.get(str(question.id), [])
-            if correct_choice and set(user_choices) == {str(correct_choice.id)}:
+            correct_choice = question.correct_ans
+            user_choice = selected_choices.get(str(question.id))
+            if user_choice == correct_choice:
                 total_score += 1
-
-            quiz_response = QuizResponse.objects.create(
-                attempt=quiz_attempt,
-                question=question,
-                is_correct=set(user_choices) == {str(correct_choice.id)}
-            )
-            quiz_response.selected_choices.set(user_choices)
             
         quiz_attempt.score = total_score
         quiz_attempt.save()

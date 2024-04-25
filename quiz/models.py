@@ -23,16 +23,20 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question_text = models.TextField()
-
+    option_one = models.CharField(max_length=255, blank = True, null=True)
+    option_two = models.CharField(max_length=255, blank = True, null=True)
+    option_three = models.CharField(max_length=255, blank = True, null=True)
+    option_four = models.CharField(max_length=255, blank = True, null=True)
+    correct_ans = models.CharField(max_length=255, blank = True, null=True)
     def __str__(self):
         return self.question_text
 
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=255)
-    is_correct = models.BooleanField(default=False, blank=True, null=True)
-    def __str__(self):
-        return self.choice_text
+#class Choice(models.Model):
+#    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+#    choice_text = models.CharField(max_length=255)
+#    is_correct = models.BooleanField(default=False, blank=True, null=True)
+#    def __str__(self):
+#        return self.choice_text
 
 class QuizAttempt(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,11 +48,11 @@ class QuizAttempt(models.Model):
     def __str__(self):
         return f'{self.user.username}: {self.quiz.title}'
     
-class QuizResponse(models.Model):
-    attempt = models.ForeignKey(QuizAttempt, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    selected_choices = models.ManyToManyField(Choice)
-    is_correct = models.BooleanField(default=False)
+#class QuizResponse(models.Model):
+#    attempt = models.ForeignKey(QuizAttempt, on_delete=models.CASCADE)
+#    selected_choices = models.ManyToManyField(Choice)
+#    is_correct = models.BooleanField(default=False)
+#    question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 class Rating(models.Model):
     reviewer = models.ForeignKey(Student, on_delete = models.CASCADE)
