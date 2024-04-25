@@ -1,6 +1,7 @@
 asgiref
 certifi
-crispy-bootstrap5  
+crispy-bootstrap5
+django-cors-headers  
 distlib
 dj-database-url    
 Django
